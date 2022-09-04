@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CollectionFamilyDao implements FamilyDao {
     List<Family> families;
@@ -11,8 +12,8 @@ public class CollectionFamilyDao implements FamilyDao {
     public CollectionFamilyDao(){
         families = new ArrayList<Family>();
         Family f1 = new Family(new Human("Allahverdi","Hajiyev"),new Human("Allahverdi","Hajiyev"));
-        Family f2 = new Family(new Human("Hajiyev","Allahverdi"),new Human("Hajiyev","Allahverdi"));
-        Set<Pet> p = new HashSet<Pet>();
+//        Family f2 = new Family(new Human("Hajiyev","Allahverdi"),new Human("Hajiyev","Allahverdi"));
+          Set<Pet> p = new HashSet<Pet>();
         p.add(new Pet() {
             @Override
             public String eat() {
@@ -30,10 +31,11 @@ public class CollectionFamilyDao implements FamilyDao {
             }
         });
         f1.setPet(p);
-        f2.setPet(p);
+//        f2.setPet(p);
         families.add(f1);
-        families.add(f2);
+//        families.add(f2);
     }
+
 
     @Override
     public List<Family> getAllFamilies() {
@@ -64,9 +66,121 @@ public class CollectionFamilyDao implements FamilyDao {
         return families;
     }
 
+    @Override
+    public List<Family> displayAllFamilies() {
+        return families.stream().toList();
+    }
+
+    @Override
+    public List<Family> getFamiliesBiggerThan(int n) {
+        return families
+                .stream()
+                .filter(f->f.countFamily()>n)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<Family> getFamiliesLessThan(int n) {
+        return families
+                .stream()
+                .filter(f->f.countFamily()<n)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int countFamiliesWithMemberNumber() {
+        List<Family> fam = families
+                .stream()
+                .filter(f->f.countFamily()==4)
+                .collect(Collectors.toList());
+        return fam.size();
+    }
+
+    @Override
+    public void createNewFamily(Human father, Human mother, List<Human> children) {
+        families.add(new Family(father,mother, children));
+        System.out.println("new Family is created and added to database");
+    }
+
+    @Override
+    public void deleteFamilyByIndex(int index) {
+        deleteFamily(index);
+        System.out.println(index + "th family was removed from DAO");
+    }
+
+    public static List<Human> deleteChild(Family f, Human child) {
+        List<Human> children = new ArrayList<>(f.getChildren());
+        int i = 0;
+        List<Human> newChildren = new ArrayList<>();
+        for (Human ch : children) {
+            if (!ch.equals(child)) {
+                newChildren.set(i, ch);
+                i++;
+            }
+        }
+        System.out.println("Child was deleted");
+        children = newChildren;
+        return children;
+    }
+    @Override
+    public Family deleteAllChildrenOlderThen(Family f, int n) {
+        List<Human> childrens = f.getChildren()
+                .stream()
+                .filter(a->(2022-a.getYear())<n)
+                .collect(Collectors.toList());
+
+        childrens.forEach((c)->deleteChild(f, c));
+        f.setChildren(childrens);
+        return f;
+    }
+
+    @Override
+    public void bornChild(Family family, String gender) {
+        if(gender.equals("masculine")){
+            families
+                    .stream().filter(f->f.equals(family))
+                    .findFirst()
+                    .get()
+                    .addChild(new Human("masculine name","masculine surname"));
+
+        }else if (gender.equals("feminine")) {
+            families
+                    .stream().filter(f->f.equals(family))
+                    .findFirst().get()
+                    .addChild(new Human("feminine name","feminine surname"));
+        }
+    }
+
+    @Override
+    public Family adoptChild(Family f, Human child) {
+        f.addChild(child);
+        return f;
+    }
+
+    @Override
+    public int count() {
+        return getAllFamilies().size();
+    }
+
+    @Override
+    public Family getFamilyById(int id) {
+        return getAllFamilies().get(id);
+    }
+
+    @Override
+    public List<Pet> getPets(int family_index, int index) {
+        return getFamilyById(family_index).getPet().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public void addPet(int index, Pet p) {
+        getFamilyById(index).getPet().add(p);
+        System.out.println("a new pet is added to the specified family");
+    }
+
     public void create(Family family) {
         getAllFamilies().add(family);
         System.out.println("new family is added to DAO");
     }
+
 }
 
