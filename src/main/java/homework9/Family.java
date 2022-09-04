@@ -19,7 +19,7 @@ public class Family {
         this.pet = pet;
     }
 
-    public Family(Human father, Human mother, ArrayList<Human> children) {
+    public Family(Human father, Human mother, List<Human> children) {
         this.father = father;
         this.mother = mother;
         this.children = children;
