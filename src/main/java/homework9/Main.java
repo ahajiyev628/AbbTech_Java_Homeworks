@@ -1,49 +1,33 @@
 package homework9;
 
-import java.util.*;
+import java.util.Arrays;
 
 public class Main {
 
     public static <CollectionFamilyDAO> void main(String[] args) {
-        FamilyDao fams = new FamilyDao() {
-            @Override
-            public List<Family> getAllFamilies() {
-                return null;
-            }
+        FamilyController fc = new FamilyController();
 
-            @Override
-            public Family getFamilyByIndex(int index) {
-                return null;
-            }
 
-            @Override
-            public Boolean deleteFamily(int index) {
-                return null;
-            }
+        Human child1 = new Human("child1","child1");
+        Human child2 = new Human("child2","child2");
+        Human child3 = new Human("child3","child3");
+        fc.createNewFamily(new Human("father","father"),new Human("mother","mother"), Arrays.asList(child1, child2));
+        fc.createNewFamily(new Human("father","father"),new Human("mother","mother"), Arrays.asList(child3));
 
-            @Override
-            public Boolean deleteFamily(Family f) {
-                return null;
-            }
+        System.out.println(fc.count());
 
-            @Override
-            public List<Family> saveFamily(Family f) {
-                return null;
-            }
-        };
-        FamilyService fs = new FamilyService(new CollectionFamilyDao());
-        FamilyController fc = new FamilyController(fs);
+        System.out.println(fc.getAllFamilies());
+        System.out.println(fc.displayAllFamilies());
+        System.out.println(fc.getPets(0,0));
+        System.out.println(fc.getAllFamilies());
 
-        fs.createNewFamily(new Human("Allahverdi","Hajiyev"),new Human("Allahverdi","Hajiyev"));
-        System.out.println(fs.getAllFamilies());
-        System.out.println(fs.count());
-        System.out.println(fs.displayAllFamilies());
-        System.out.println(fs.getPets(0));
-        System.out.println(fs.getFamiliesLessThan(2));
-        System.out.println(fs.getFamiliesBiggerThan(1));
-        fs.createNewFamily(new Human("Allahverdi2","Hajiyev"),new Human("Allahverdi2","Hajiyev"));
-        System.out.println(fs.getAllFamilies());
 
-        System.out.println(fs.count());
+        System.out.println(fc.getFamiliesLessThan(4));
+        System.out.println(fc.getFamiliesBiggerThan(1));
+
+        System.out.println(fc.count());
+
+        System.out.println(fc.getFamiliesLessThan(4).size());
+        System.out.println(fc.getFamiliesBiggerThan(1).size());
     }
 }
